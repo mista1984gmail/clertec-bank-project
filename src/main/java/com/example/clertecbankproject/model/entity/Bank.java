@@ -11,6 +11,15 @@ import java.util.List;
 @NoArgsConstructor
 public class Bank {
     private Long id;
-    private String name;
+    private String bankName;
     private List<Client> clients;
+
+    public Bank(String bankName) {
+        this.bankName = bankName;
+    }
+
+    public Bank(Long id, String bankName) {
+        this.id = id;
+        this.bankName = bankName;
+    }
 }
