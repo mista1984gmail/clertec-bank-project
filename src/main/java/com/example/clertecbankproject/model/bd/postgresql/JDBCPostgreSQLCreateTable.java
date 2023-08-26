@@ -24,9 +24,9 @@ public class JDBCPostgreSQLCreateTable {
                 logger.info("Created table {} in given database...", entry.getKey());
             }
         }catch(SQLException se){
-            se.printStackTrace();
+            logger.error(se.getMessage());
         }catch(Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }finally{
             try{
                 if(stmt!=null)
@@ -36,8 +36,8 @@ public class JDBCPostgreSQLCreateTable {
             try{
                 if(conn!=null)
                     conn.close();
-            }catch(SQLException se){
-                se.printStackTrace();
+            }catch(SQLException sqle){
+                logger.error(sqle.getMessage());
             }
         }
     }
