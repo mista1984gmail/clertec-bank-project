@@ -1,5 +1,5 @@
 package com.example.clertecbankproject.model.entity;
 
-public enum Status {
+public enum TransactionType {
     IN_PROGRESS, CANCELED, APPROVED
 }

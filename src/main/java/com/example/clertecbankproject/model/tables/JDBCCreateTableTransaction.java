@@ -9,6 +9,6 @@ public class JDBCCreateTableTransaction {
             " amount NUMERIC(19, 2), " +
             " currency VARCHAR(255), " +
             " transaction_time TIMESTAMP, " +
-            " status VARCHAR(255), " +
+            " transaction_type VARCHAR(255), " +
             " PRIMARY KEY ( id ))";
 }

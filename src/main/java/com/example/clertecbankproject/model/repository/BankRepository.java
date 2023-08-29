@@ -1,9 +1,9 @@
 package com.example.clertecbankproject.model.repository;
 
 import com.example.clertecbankproject.model.entity.Bank;
+import com.example.clertecbankproject.model.entity.Client;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BankRepository {
     boolean saveBank(Bank bank) throws Exception;
@@ -12,4 +12,8 @@ public interface BankRepository {
     Bank getBank(Long id) throws Exception;
 
     void updateBank(Long idForUpdate, String nameOfBank);
+
+    void addClientToBank(Long clientId, Long bankId);
+
+    List<Client> showAllBankClients(Long bankId) throws Exception;
 }

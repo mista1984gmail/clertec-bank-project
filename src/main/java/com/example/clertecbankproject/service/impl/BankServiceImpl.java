@@ -1,6 +1,7 @@
 package com.example.clertecbankproject.service.impl;
 
 import com.example.clertecbankproject.model.entity.Bank;
+import com.example.clertecbankproject.model.entity.Client;
 import com.example.clertecbankproject.model.repository.BankRepository;
 import com.example.clertecbankproject.service.BankService;
 import org.slf4j.Logger;
@@ -13,6 +14,9 @@ public class BankServiceImpl implements BankService {
     private static final Logger logger = LoggerFactory.getLogger(BankServiceImpl.class);
     public static final Consumer<Bank> LOG_ACTION = bank ->
             logger.debug("id: " + bank.getId() + ", " + bank.getBankName());
+
+    public static final Consumer<Client> LOG_ACTION_CLIENTS = client ->
+            logger.debug("{}", client);
     private BankRepository repository;
 
     public BankServiceImpl() {
@@ -85,9 +89,29 @@ public class BankServiceImpl implements BankService {
         }
     }
 
+    @Override
+    public void addClientToBank() {
+        Long idBank;
+        Long idClient;
+        logger.info("Enter the id of the bank to which you want to add a client: ");
+        Scanner scanner = new Scanner(System.in);
+        idBank = scanner.nextLong();
+        logger.info("Enter the id of the client to be added: ");
+        idClient = scanner.nextLong();
+        repository.addClientToBank(idBank, idClient);
+    }
+
+    @Override
+    public void showAllBankClients() throws Exception{
+        Long idBank;
+        logger.info("Enter the id of the bank to which you want to show all clients: ");
+        Scanner scanner = new Scanner(System.in);
+        idBank = scanner.nextLong();
+        repository.showAllBankClients(idBank).forEach(LOG_ACTION_CLIENTS);
+    }
+
     public void deleteBank(Long id) throws Exception {
         logger.info("Trying to delete bank with id= '{}'", id);
-        logger.info("Bank with id= '{}' delete", id);
         repository.deleteBank(id);
     }
 
