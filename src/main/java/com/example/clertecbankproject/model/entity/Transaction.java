@@ -16,6 +16,17 @@ public class Transaction {
     private Long targetAccountId;
     private BigDecimal amount;
     private Currency currency;
-    private LocalDateTime transaction_time;
+    private LocalDateTime transactionTime;
     private TransactionType transactionType;
+    private Status status;
+
+    public Transaction(Long sourceAccountId, Long targetAccountId, BigDecimal amount, Currency currency, LocalDateTime transactionTime, TransactionType transactionType, Status status) {
+        this.sourceAccountId = sourceAccountId;
+        this.targetAccountId = targetAccountId;
+        this.amount = amount;
+        this.currency = currency;
+        this.transactionTime = transactionTime;
+        this.transactionType = transactionType;
+        this.status = status;
+    }
 }

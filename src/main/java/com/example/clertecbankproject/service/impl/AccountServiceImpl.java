@@ -1,12 +1,13 @@
 package com.example.clertecbankproject.service.impl;
 
-import com.example.clertecbankproject.model.entity.Account;
-import com.example.clertecbankproject.model.entity.Client;
-import com.example.clertecbankproject.model.entity.Currency;
+import com.example.clertecbankproject.model.entity.*;
 import com.example.clertecbankproject.model.entity.dto.AccountDto;
 import com.example.clertecbankproject.model.repository.AccountRepository;
+import com.example.clertecbankproject.model.repository.TransactionRepository;
 import com.example.clertecbankproject.service.AccountNumberGenerationService;
 import com.example.clertecbankproject.service.AccountService;
+import com.example.clertecbankproject.service.PaymentCheckService;
+import com.example.clertecbankproject.service.TransactionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +22,16 @@ public class AccountServiceImpl implements AccountService {
             logger.debug("{}", account);
 
     private AccountRepository accountRepository;
+    private TransactionService transactionService;
+    private PaymentCheckService paymentCheckService;
 
     public AccountServiceImpl() {
     }
 
-    public AccountServiceImpl(AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountRepository accountRepository, TransactionService transactionService, PaymentCheckService paymentCheckService) {
         this.accountRepository = accountRepository;
+        this.transactionService = transactionService;
+        this.paymentCheckService = paymentCheckService;
     }
 
     @Override
@@ -79,6 +84,7 @@ public class AccountServiceImpl implements AccountService {
         } else {
             logger.debug("Account with id= '{}', {}", account.getId(), account);
             accountRepository.depositAccount(account, deposite);
+            transactionService.deposit(account.getId(), account.getCurrency(), deposite);
         }
     }
 
@@ -98,6 +104,64 @@ public class AccountServiceImpl implements AccountService {
         Scanner scanner = new Scanner(System.in);
         idForShow = scanner.nextLong();
         accountRepository.getAllClientAccounts(idForShow).forEach(LOG_ACTION);
+    }
+
+    @Override
+    public synchronized Transaction replenishmentMoney() throws Exception {
+        Long sourceAccountId;
+        Long targetAccountId;
+        logger.info("Input id account for replenishment money: ");
+        Scanner scanner = new Scanner(System.in);
+        sourceAccountId = scanner.nextLong();
+        logger.info("Input id account where to replenishment money: ");
+        targetAccountId = scanner.nextLong();
+        logger.info("Input amount to replenishment money:");
+        Double deposit = scanner.nextDouble();
+        logger.info("Trying to get account with id = '{}'", sourceAccountId);
+        Account sourceAccount = accountRepository.getAccount(sourceAccountId);
+        logger.info("Trying to get account with id = '{}'", targetAccountId);
+        Account targetAccount = accountRepository.getAccount(targetAccountId);
+        if (sourceAccount.getId()==null) {
+            logger.debug("Source account with id {} don't exist", sourceAccount.getId());
+            return transactionService.save(new Transaction(sourceAccountId, targetAccountId, new BigDecimal(deposit), sourceAccount.getCurrency(), LocalDateTime.now(), TransactionType.REPLENISHMENT, Status.CANCELED));
+        }
+        if (targetAccount.getId()==null) {
+            logger.debug("Target account with id {} don't exist", sourceAccount.getId());
+            return transactionService.save(new Transaction(sourceAccountId, targetAccountId, new BigDecimal(deposit), sourceAccount.getCurrency(), LocalDateTime.now(), TransactionType.REPLENISHMENT, Status.CANCELED));
+        }
+        if (new BigDecimal(deposit).compareTo(new BigDecimal(0)) < 0) {
+            logger.debug("Transfer amount must be positive, but {}", deposit);
+            return transactionService.save(new Transaction(sourceAccountId, targetAccountId, new BigDecimal(deposit), sourceAccount.getCurrency(), LocalDateTime.now(), TransactionType.REPLENISHMENT, Status.CANCELED));
+        }
+        if (sourceAccount.getBalance().compareTo(new BigDecimal(deposit)) < 0) {
+            logger.debug("Not enough money on source account");
+            return transactionService.save(new Transaction(sourceAccountId, targetAccountId, new BigDecimal(deposit), sourceAccount.getCurrency(), LocalDateTime.now(), TransactionType.REPLENISHMENT, Status.CANCELED));
+        }
+        accountRepository.depositAccount(sourceAccount, -deposit);
+        transactionService.save(new Transaction(targetAccountId, sourceAccountId, new BigDecimal(deposit).multiply(new BigDecimal(-1)), sourceAccount.getCurrency(), LocalDateTime.now(), TransactionType.REPLENISHMENT, Status.APPROVED));
+        accountRepository.depositAccount(targetAccount, deposit);
+        paymentCheckService.createPaymentCheck(sourceAccount, targetAccount, deposit, TransactionType.REPLENISHMENT);
+        return transactionService.save(new Transaction(sourceAccountId, targetAccountId, new BigDecimal(deposit), sourceAccount.getCurrency(), LocalDateTime.now(), TransactionType.REPLENISHMENT, Status.APPROVED));
+    }
+
+    @Override
+    public synchronized void withdrawalMoney() throws Exception {
+        Long id;
+        logger.info("Input id account for withdrawal");
+        Scanner scanner = new Scanner(System.in);
+        id = scanner.nextLong();
+        logger.info("Input deposit");
+        Double deposite = scanner.nextDouble();
+        logger.info("Trying to get account with id = '{}'", id);
+        Account account = accountRepository.getAccount(id);
+        if (account.getId()==null) {
+            logger.debug("Account with id={} don't exist",id);
+        }
+        else {
+            logger.debug("Account with id= '{}', {}", account.getId(), account);
+            accountRepository.depositAccount(account, -deposite);
+            transactionService.withdrawal(account.getId(), account.getCurrency(), deposite);
+        }
     }
 
     public void deleteAccount(Long id) throws Exception {

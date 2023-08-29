@@ -1,18 +1,10 @@
 package com.example.clertecbankproject;
 
 import com.example.clertecbankproject.model.bd.postgresql.service.PostgreSQLCreateTables;
-import com.example.clertecbankproject.model.repository.AccountRepository;
-import com.example.clertecbankproject.model.repository.BankRepository;
-import com.example.clertecbankproject.model.repository.ClientRepository;
-import com.example.clertecbankproject.model.repository.impl.AccountRepositoryImpl;
-import com.example.clertecbankproject.model.repository.impl.BankRepositoryImpl;
-import com.example.clertecbankproject.model.repository.impl.ClientRepositoryImpl;
-import com.example.clertecbankproject.service.AccountService;
-import com.example.clertecbankproject.service.BankService;
-import com.example.clertecbankproject.service.ClientService;
-import com.example.clertecbankproject.service.impl.AccountServiceImpl;
-import com.example.clertecbankproject.service.impl.BankServiceImpl;
-import com.example.clertecbankproject.service.impl.ClientServiceImpl;
+import com.example.clertecbankproject.model.repository.*;
+import com.example.clertecbankproject.model.repository.impl.*;
+import com.example.clertecbankproject.service.*;
+import com.example.clertecbankproject.service.impl.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,15 +13,18 @@ import java.util.Scanner;
 public class App {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
     public static final BankRepository BANK_REPOSITORY = new BankRepositoryImpl();
+    public static final BillNumberRepository BILL_NUMBER_REPOSITORY = new BillNumberRepositoryImpl();
     public static final BankService BANK_SERVICE = new BankServiceImpl(BANK_REPOSITORY);
     public static final ClientRepository CLIENT_REPOSITORY = new ClientRepositoryImpl();
     public static final ClientService CLIENT_SERVICE = new ClientServiceImpl(CLIENT_REPOSITORY);
 
     public static final AccountRepository ACCOUNT_REPOSITORY = new AccountRepositoryImpl();
-    public static final AccountService ACCOUNT_SERVICE = new AccountServiceImpl(ACCOUNT_REPOSITORY);
+    public static final TransactionService TRANSACTION_SERVICE = new TransactionServiceImpl();
+    public static final PaymentCheckService PAYMENT_CHECK_SERVICE = new PaymentCheckServiceImpl(BANK_REPOSITORY, BILL_NUMBER_REPOSITORY);
+    public static final AccountService ACCOUNT_SERVICE = new AccountServiceImpl(ACCOUNT_REPOSITORY, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE);
 
     public static void main(String[] args) throws Exception {
-    /*    PostgreSQLCreateTables postgreSQLCreateTables = new PostgreSQLCreateTables();
+/*        PostgreSQLCreateTables postgreSQLCreateTables = new PostgreSQLCreateTables();
         postgreSQLCreateTables.createTablesInDataBase();*/
 
         int userInput = 0;
@@ -75,7 +70,9 @@ public class App {
             logger.info("Enter 2 to show account by id");
             logger.info("Enter 3 to add account");
             logger.info("Enter 4 to deposit account");
-            logger.info("Enter 5 to delete account");
+            logger.info("Enter 5 to replenishment money");
+            logger.info("Enter 6 to withdrawal money");
+            logger.info("Enter 7 to delete account");
             logger.info("_______________________________________________________________________");
             userInput = scanner.nextInt();
             switch (userInput) {
@@ -95,6 +92,12 @@ public class App {
                     ACCOUNT_SERVICE.depositAccount();
                     break;
                 case 5:
+                    ACCOUNT_SERVICE.replenishmentMoney();
+                    break;
+                case 6:
+                    ACCOUNT_SERVICE.withdrawalMoney();
+                    break;
+                case 7:
                     ACCOUNT_SERVICE.deleteAccount();
                     break;
                 default:

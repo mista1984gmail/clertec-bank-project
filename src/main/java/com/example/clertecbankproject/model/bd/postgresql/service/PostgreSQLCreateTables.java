@@ -16,6 +16,7 @@ public class PostgreSQLCreateTables {
         createTables.put(JDBCCreateTableBank.BANK_TABLE_NAME, JDBCCreateTableBank.TABLE_BANK_SQL_CREATE);
         createTables.put(JDBCCreateTableBankClient.BANK_CLIENT_TABLE_NAME, JDBCCreateTableBankClient.TABLE_BANK_CLIENT_SQL_CREATE);
         createTables.put(JDBCCreateTableTransaction.TRANSACTION_TABLE_NAME, JDBCCreateTableTransaction.TABLE_TRANSACTION_SQL_CREATE);
+        createTables.put(JDBCCreateTableBillNumber.BILL_TABLE_NAME, JDBCCreateTableBillNumber.TABLE_BILL_SQL_CREATE);
         JDBCPostgreSQLCreateTable jdbcPostgreSQLCreateTable = new JDBCPostgreSQLCreateTable();
         jdbcPostgreSQLCreateTable.createTables(createTables);
     }
