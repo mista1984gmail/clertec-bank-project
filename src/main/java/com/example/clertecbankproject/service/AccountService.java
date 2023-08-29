@@ -1,6 +1,7 @@
 package com.example.clertecbankproject.service;
 
 import com.example.clertecbankproject.model.entity.Account;
+import com.example.clertecbankproject.model.entity.Transaction;
 
 public interface AccountService {
     void addAccount() throws Exception;
@@ -9,4 +10,7 @@ public interface AccountService {
     void deleteAccount () throws Exception;
 
     void getAllClientAccounts() throws Exception;
+
+    Transaction replenishmentMoney() throws Exception;
+    void withdrawalMoney() throws Exception;
 }
