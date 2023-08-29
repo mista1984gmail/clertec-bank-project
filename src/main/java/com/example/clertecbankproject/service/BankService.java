@@ -8,4 +8,6 @@ public interface BankService {
     void deleteBank () throws Exception;
     Bank getBank() throws Exception;
     void updateBank () throws Exception;
+    void addClientToBank();
+    void showAllBankClients() throws Exception;
 }

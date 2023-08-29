@@ -17,5 +17,5 @@ public class Transaction {
     private BigDecimal amount;
     private Currency currency;
     private LocalDateTime transaction_time;
-    private Status status;
+    private TransactionType transactionType;
 }
