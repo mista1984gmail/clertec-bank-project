@@ -9,4 +9,5 @@ public interface PaymentCheckService {
     void createPaymentCheckForDeposit(Account account, Double deposit, TransactionType transactionType) throws Exception;
 
     void createPaymentCheckForWithdrawal(Account account, Double deposit, TransactionType transactionType) throws Exception;
+    void createPaymentCheckForInterestCalculation(Account account, Double deposit, TransactionType transactionType) throws Exception;
 }

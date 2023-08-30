@@ -1,5 +1,6 @@
-package com.example.clertecbankproject.model.entity;
+package com.example.clertecbankproject.model.entity.util;
 
+import com.example.clertecbankproject.model.entity.TransactionType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

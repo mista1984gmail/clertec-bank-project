@@ -1,44 +1,55 @@
 package com.example.clertecbankproject.model.repository.impl;
 
 import com.example.clertecbankproject.model.bd.postgresql.JDBCPostgreSQLConnection;
-import com.example.clertecbankproject.model.entity.util.BillNumber;
-import com.example.clertecbankproject.model.repository.BillNumberRepository;
+import com.example.clertecbankproject.model.entity.Client;
+import com.example.clertecbankproject.model.entity.util.InterestDate;
+import com.example.clertecbankproject.model.repository.InterestDateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BillNumberRepositoryImpl implements BillNumberRepository {
-    private static final Logger logger = LoggerFactory.getLogger(BillNumberRepositoryImpl.class);
+public class InterestDateRepositoryImpl implements InterestDateRepository {
+    private static final Logger logger = LoggerFactory.getLogger(InterestDateRepositoryImpl.class);
 
     @Override
-    public boolean saveBillNumber(BillNumber billNumber) throws Exception {
-        String insertTableSQL = "INSERT INTO bills"
-                + "(bill_number) " + "VALUES "
-                + "('" + billNumber.getBillNumber() + "')";
+    public boolean saveInterestDate(InterestDate interestDate) throws Exception {
+        String insertTableSQL = "INSERT INTO interest_date_calculation"
+                + "(interest_date) " + "VALUES "
+                + "('" + interestDate.getInterestDateOfCalculation() + "')";
         executeStatement(insertTableSQL);
         return true;
     }
 
     @Override
-    public long getCountBills() throws Exception {
+    public List<InterestDate> getAllInterestDate() throws Exception {
         Connection connection = null;
-        Long countBills = 0L;
+        List<InterestDate> interestDates = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
         try {
             logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
             logger.info("Connected database successfully...");
-            String selectTableSQL = "SELECT COUNT(*) from bills";
+            String selectTableSQL = "SELECT * from interest_date_calculation";
             PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
-                countBills = Long.parseLong(rs.getString("count"));
+                Long id = Long.parseLong(rs.getString("id"));
+                LocalDateTime interestDateCalculation = LocalDateTime.parse(rs.getString("interest_date"), formatter);
+                InterestDate interestDate = new InterestDate(id, interestDateCalculation);
+                interestDates.add(interestDate);
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
-        return countBills;
+        return interestDates;
     }
+
+
 
     public void executeStatement(String sql){
         Connection connection = null;
@@ -66,5 +77,5 @@ public class BillNumberRepositoryImpl implements BillNumberRepository {
                 se.printStackTrace();
             }
         }
-    }
+}
 }

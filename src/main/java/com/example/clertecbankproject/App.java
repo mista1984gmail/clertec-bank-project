@@ -1,30 +1,38 @@
 package com.example.clertecbankproject;
 
+import com.example.clertecbankproject.model.bd.postgresql.service.PostgreSQLCreateTables;
 import com.example.clertecbankproject.model.repository.*;
 import com.example.clertecbankproject.model.repository.impl.*;
 import com.example.clertecbankproject.service.*;
 import com.example.clertecbankproject.service.impl.*;
+import com.example.clertecbankproject.service.schedule.task.InterestCalculationScheduledExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class App {
     private static final Logger logger = LoggerFactory.getLogger(App.class);
     public static final BankRepository BANK_REPOSITORY = new BankRepositoryImpl();
+    public static final TransactionRepository TRANSACTION_REPOSITORY = new TransactionRepositoryImpl();
     public static final BillNumberRepository BILL_NUMBER_REPOSITORY = new BillNumberRepositoryImpl();
     public static final BankService BANK_SERVICE = new BankServiceImpl(BANK_REPOSITORY);
     public static final ClientRepository CLIENT_REPOSITORY = new ClientRepositoryImpl();
     public static final ClientService CLIENT_SERVICE = new ClientServiceImpl(CLIENT_REPOSITORY);
-
     public static final AccountRepository ACCOUNT_REPOSITORY = new AccountRepositoryImpl();
     public static final TransactionService TRANSACTION_SERVICE = new TransactionServiceImpl();
+    private static final InterestDateRepository INTEREST_DATE_REPOSITORY = new InterestDateRepositoryImpl();
     public static final PaymentCheckService PAYMENT_CHECK_SERVICE = new PaymentCheckServiceImpl(BANK_REPOSITORY, BILL_NUMBER_REPOSITORY);
     public static final AccountService ACCOUNT_SERVICE = new AccountServiceImpl(ACCOUNT_REPOSITORY, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE);
 
     public static void main(String[] args) throws Exception {
 /*        PostgreSQLCreateTables postgreSQLCreateTables = new PostgreSQLCreateTables();
         postgreSQLCreateTables.createTablesInDataBase();*/
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(new InterestCalculationScheduledExecutor(INTEREST_DATE_REPOSITORY, ACCOUNT_REPOSITORY, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE), 0, 1, TimeUnit.MINUTES);
 
         int userInput = 0;
         Scanner scanner = new Scanner(System.in);

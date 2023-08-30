@@ -1,4 +1,4 @@
-package com.example.clertecbankproject.model.entity;
+package com.example.clertecbankproject.model.entity.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
