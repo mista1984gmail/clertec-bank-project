@@ -1,6 +1,7 @@
 package com.example.clertecbankproject.service.impl;
 
 import com.example.clertecbankproject.model.entity.*;
+import com.example.clertecbankproject.model.entity.util.AccountStatement;
 import com.example.clertecbankproject.model.entity.util.BillNumber;
 import com.example.clertecbankproject.model.entity.util.PaymentCheck;
 import com.example.clertecbankproject.model.repository.BankRepository;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class PaymentCheckServiceImpl implements PaymentCheckService {
     private static final Logger logger = LoggerFactory.getLogger(PaymentCheckServiceImpl.class);
@@ -140,11 +142,62 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
         billNumberRepository.saveBillNumber(new BillNumber(numberOfBill));
     }
 
+    @Override
+    public void createAccountStatement(Client client, Account account, List<Transaction> transactions, String startDate, String endDate) throws Exception {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("dd-MM-yyyy, HH.mm");
+        AccountStatement accountStatement = new AccountStatement();
+        Bank bank = repository.getBank(account.getBankId());
+        accountStatement.setNameOfBank(bank.getBankName());
+        accountStatement.setFullNameOfClient(client.getLastName() + " " + client.getFirstName() + " " + client.getSecondName());
+        accountStatement.setAccountNumber(account.getAccountNumber());
+        accountStatement.setCurrency(account.getCurrency().name());
+        accountStatement.setOpeningDate(account.getRegistrationDate().format(formatter));
+        accountStatement.setPeriod(startDate + " - " + endDate);
+        accountStatement.setDateAndTimeOfFormation(LocalDateTime.now().format(formatter1));
+        accountStatement.setBalance(account.getBalance().toString() + " " + account.getCurrency().name());
+        accountStatement.setTransactions(transactions);
+        getBankAccountStatement(accountStatement);
+        String file = "src/main/resources/bills/statement.txt";
+        try(FileWriter writer = new FileWriter(file, false))
+        {
+            StringBuilder text = getBankAccountStatement(accountStatement);
+            writer.write(text.toString());
+            writer.flush();
+        }
+        catch(IOException ex){
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private StringBuilder getBankAccountStatement(AccountStatement accountStatement) {
+        StringBuilder text = new StringBuilder();
+        text.append("\n");
+        text.append(bankCheckLine(100, "Выписка"));
+        text.append("\n");
+        text.append(bankCheckLine(100, accountStatement.getNameOfBank()));
+        text.append("\n");
+        text.append("   Клиент                              | " + accountStatement.getFullNameOfClient());
+        text.append("\n");
+        text.append("   Счет                                | " + accountStatement.getAccountNumber());
+        text.append("\n");
+        text.append("   Валюта                              | " + accountStatement.getCurrency());
+        text.append("\n");
+        text.append("   Дата открытия                       | " + accountStatement.getOpeningDate());
+        text.append("\n");
+        text.append("   Период                              | " + accountStatement.getPeriod());
+        text.append("\n");
+        text.append("   Дата и время формирования           | " + accountStatement.getDateAndTimeOfFormation());
+        text.append("\n");
+        text.append("   Остаток                             | " + accountStatement.getBalance());
+        return text;
+    }
+
     private StringBuilder getBankCheckForInterestCalculation(Account account, PaymentCheck paymentCheck) {
         StringBuilder text = new StringBuilder();
         text.append(firstAndLastLine());
         text.append("\n");
-        text.append(bankCheckLine("Банковский Чек"));
+        text.append(bankCheckLine(50, "Банковский Чек"));
         text.append("\n");
         text.append(formatLine("| Чек: ", paymentCheck.getNumber().toString()));
         text.append("\n");
@@ -166,7 +219,7 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
         StringBuilder text = new StringBuilder();
         text.append(firstAndLastLine());
         text.append("\n");
-        text.append(bankCheckLine("Банковский Чек"));
+        text.append(bankCheckLine(50, "Банковский Чек"));
         text.append("\n");
         text.append(formatLine("| Чек: ", paymentCheck.getNumber().toString()));
         text.append("\n");
@@ -188,7 +241,7 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
         StringBuilder text = new StringBuilder();
         text.append(firstAndLastLine());
         text.append("\n");
-        text.append(bankCheckLine("Банковский Чек"));
+        text.append(bankCheckLine(50, "Банковский Чек"));
         text.append("\n");
         text.append(formatLine("| Чек: ", paymentCheck.getNumber().toString()));
         text.append("\n");
@@ -210,7 +263,7 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
         StringBuilder text = new StringBuilder();
         text.append(firstAndLastLine());
         text.append("\n");
-        text.append(bankCheckLine("Банковский Чек"));
+        text.append(bankCheckLine(50,"Банковский Чек"));
         text.append("\n");
         text.append(formatLine("| Чек: ", paymentCheck.getNumber().toString()));
         text.append("\n");
@@ -260,10 +313,10 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
         }
         return sb.toString();
     }
-    public String bankCheckLine(String world){
+    public String bankCheckLine(int sizeLine, String world){
         StringBuilder sb = new StringBuilder();
         sb.append("|");
-        int sizeSpace = (50 - world.length())/2;
+        int sizeSpace = (sizeLine - world.length())/2;
         for (int i = 0; i < sizeSpace; i++) {
             sb.append(" ");
         }

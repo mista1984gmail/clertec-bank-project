@@ -13,4 +13,6 @@ public interface AccountService {
 
     Transaction replenishmentMoney() throws Exception;
     Transaction withdrawalMoney() throws Exception;
+
+    void generationAccountStatement() throws Exception;
 }

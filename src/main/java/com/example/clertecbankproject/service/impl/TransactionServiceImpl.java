@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TransactionServiceImpl implements TransactionService {
     private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
@@ -59,5 +60,11 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setStatus(Status.APPROVED);
         transactionRepository.saveTransaction(transaction);
         return transaction;
+    }
+
+    @Override
+    public List<Transaction> getTransactionsForPeriod(Long id, String startDate, String endDate) throws Exception {
+        List<Transaction> transactions = transactionRepository.getTransactionsForPeriod(id, startDate, endDate);
+        return transactions;
     }
 }

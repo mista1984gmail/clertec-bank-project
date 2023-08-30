@@ -108,6 +108,11 @@ public class ClientServiceImpl implements ClientService {
         }
     }
 
+    @Override
+    public Client getClientById(Long id) throws Exception {
+        return clientRepository.getClient(id);
+    }
+
     public void deleteClient(Long id) throws Exception {
         logger.info("Удаление КЛИЕНТА с id= '{}'", id);
         clientRepository.deleteClient(id);

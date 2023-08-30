@@ -3,15 +3,13 @@ package com.example.clertecbankproject.service.impl;
 import com.example.clertecbankproject.model.entity.*;
 import com.example.clertecbankproject.model.entity.dto.AccountDto;
 import com.example.clertecbankproject.model.repository.AccountRepository;
-import com.example.clertecbankproject.service.AccountNumberGenerationService;
-import com.example.clertecbankproject.service.AccountService;
-import com.example.clertecbankproject.service.PaymentCheckService;
-import com.example.clertecbankproject.service.TransactionService;
+import com.example.clertecbankproject.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -21,14 +19,16 @@ public class AccountServiceImpl implements AccountService {
             logger.debug("{}", account);
 
     private AccountRepository accountRepository;
+    private ClientService clientService;
     private TransactionService transactionService;
     private PaymentCheckService paymentCheckService;
 
     public AccountServiceImpl() {
     }
 
-    public AccountServiceImpl(AccountRepository accountRepository, TransactionService transactionService, PaymentCheckService paymentCheckService) {
+    public AccountServiceImpl(AccountRepository accountRepository, ClientService clientService, TransactionService transactionService, PaymentCheckService paymentCheckService) {
         this.accountRepository = accountRepository;
+        this.clientService = clientService;
         this.transactionService = transactionService;
         this.paymentCheckService = paymentCheckService;
     }
@@ -175,6 +175,27 @@ public class AccountServiceImpl implements AccountService {
             paymentCheckService.createPaymentCheckForWithdrawal(account, deposit, TransactionType.WITHDRAWAL);
             return transactionService.withdrawal(account.getId(), account.getCurrency(), deposit);
 
+    }
+
+    @Override
+    public void generationAccountStatement() throws Exception {
+        Long id;
+        logger.info("Введите id СЧЕТА для формирования выписки:");
+        Scanner scanner = new Scanner(System.in);
+        id = scanner.nextLong();
+        logger.info("Введите начало периода выписки в формате день.месяц.год (пример: 01.01.2023):");
+        Scanner scanner1 = new Scanner(System.in);
+        String startDate = scanner1.nextLine();
+        logger.info("Введите окончание периода выписки в формате день.месяц.год (пример: 01.06.2023):");
+        String endDate = scanner1.nextLine();
+        List<Transaction> transactions = transactionService.getTransactionsForPeriod(id, startDate, endDate);
+        Account account = accountRepository.getAccount(id);
+        if (account.getId()==null) {
+            logger.debug("СЧЕТ-отправитель с id {} не существует!", account.getId());}
+        else {
+            Client client = clientService.getClientById(account.getClientId());
+            paymentCheckService.createAccountStatement(client, account, transactions, startDate, endDate);
+        }
     }
 
     public void deleteAccount(Long id) throws Exception {
