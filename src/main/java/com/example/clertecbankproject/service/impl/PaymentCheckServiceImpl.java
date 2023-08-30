@@ -3,7 +3,6 @@ package com.example.clertecbankproject.service.impl;
 import com.example.clertecbankproject.model.entity.*;
 import com.example.clertecbankproject.model.repository.BankRepository;
 import com.example.clertecbankproject.model.repository.BillNumberRepository;
-import com.example.clertecbankproject.model.repository.impl.BillNumberRepositoryImpl;
 import com.example.clertecbankproject.service.PaymentCheckService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,7 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
     }
 
     @Override
-    public void createPaymentCheck(Account sourceAccount, Account targetAccount, Double deposit, TransactionType transactionType) throws Exception {
+    public void createPaymentCheckForReplenishment(Account sourceAccount, Account targetAccount, Double deposit, TransactionType transactionType) throws Exception {
         PaymentCheck paymentCheck = new PaymentCheck();
         Bank sourceBank = repository.getBank(sourceAccount.getBankId());
         String sourceBankName = sourceBank.getBankName();
@@ -54,6 +53,107 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
         billNumberRepository.saveBillNumber(new BillNumber(numberOfBill));
     }
 
+    @Override
+    public void createPaymentCheckForDeposit(Account account, Double deposit, TransactionType transactionType) throws Exception {
+        PaymentCheck paymentCheck = new PaymentCheck();
+        Bank targetBank = repository.getBank(account.getBankId());
+        String targetBankName = targetBank.getBankName();
+        Long numberOfBill = billNumberRepository.getCountBills() + 1L;
+        paymentCheck.setNumber(numberOfBill);
+        paymentCheck.setPaymentCheckDate(LocalDateTime.now());
+        paymentCheck.setTransactionType(transactionType);
+        paymentCheck.setSourceBankName(null);
+        paymentCheck.setTargetBankName(targetBankName);
+        paymentCheck.setSourceAccountNumber(null);
+        paymentCheck.setTargetAccountNumber(account.getAccountNumber());
+        paymentCheck.setAmount(new BigDecimal(deposit));
+        logger.info("{}",paymentCheck);
+        String file = "src/main/resources/bills/" + numberOfBill + "bill.txt";
+        try(FileWriter writer = new FileWriter(file, false))
+        {
+            StringBuilder text = getBankCheckForDeposit(account, paymentCheck);
+            writer.write(text.toString());
+            writer.flush();
+        }
+        catch(IOException ex){
+            System.out.println(ex.getMessage());
+        }
+        billNumberRepository.saveBillNumber(new BillNumber(numberOfBill));
+
+    }
+
+    @Override
+    public void createPaymentCheckForWithdrawal(Account account, Double deposit, TransactionType transactionType) throws Exception {
+        PaymentCheck paymentCheck = new PaymentCheck();
+        Bank sourceBank = repository.getBank(account.getBankId());
+        String sourceBankName = sourceBank.getBankName();
+        Long numberOfBill = billNumberRepository.getCountBills() + 1L;
+        paymentCheck.setNumber(numberOfBill);
+        paymentCheck.setPaymentCheckDate(LocalDateTime.now());
+        paymentCheck.setTransactionType(transactionType);
+        paymentCheck.setSourceBankName(sourceBankName);
+        paymentCheck.setTargetBankName(null);
+        paymentCheck.setSourceAccountNumber(account.getAccountNumber());
+        paymentCheck.setTargetAccountNumber(null);
+        paymentCheck.setAmount(new BigDecimal(deposit));
+        logger.info("{}",paymentCheck);
+        String file = "src/main/resources/bills/" + numberOfBill + "bill.txt";
+        try(FileWriter writer = new FileWriter(file, false))
+        {
+            StringBuilder text = getBankCheckForWithdrawal(account, paymentCheck);
+            writer.write(text.toString());
+            writer.flush();
+        }
+        catch(IOException ex){
+            System.out.println(ex.getMessage());
+        }
+        billNumberRepository.saveBillNumber(new BillNumber(numberOfBill));
+    }
+
+    private StringBuilder getBankCheckForWithdrawal(Account account, PaymentCheck paymentCheck) {
+        StringBuilder text = new StringBuilder();
+        text.append(firstAndLastLine());
+        text.append("\n");
+        text.append(bankCheckLine("Банковский Чек"));
+        text.append("\n");
+        text.append(formatLine("| Чек: ", paymentCheck.getNumber().toString()));
+        text.append("\n");
+        text.append(formatLine("| " + formatDate(paymentCheck.getPaymentCheckDate()), formatTime(paymentCheck.getPaymentCheckDate())));
+        text.append("\n");
+        text.append(formatLine("| Тип транзакции: ", "Снятие"));
+        text.append("\n");
+        text.append(formatLine("| Банк отправителя: ", paymentCheck.getSourceBankName()));
+        text.append("\n");
+        text.append(formatLine("| Счет отправителя: ", paymentCheck.getSourceAccountNumber()));
+        text.append("\n");
+        text.append(formatLine("| Сумма: ", paymentCheck.getAmount().setScale(2) + " " + account.getCurrency()));
+        text.append("\n");
+        text.append(firstAndLastLine());
+        return text;
+    }
+
+    private StringBuilder getBankCheckForDeposit(Account account, PaymentCheck paymentCheck) {
+        StringBuilder text = new StringBuilder();
+        text.append(firstAndLastLine());
+        text.append("\n");
+        text.append(bankCheckLine("Банковский Чек"));
+        text.append("\n");
+        text.append(formatLine("| Чек: ", paymentCheck.getNumber().toString()));
+        text.append("\n");
+        text.append(formatLine("| " + formatDate(paymentCheck.getPaymentCheckDate()), formatTime(paymentCheck.getPaymentCheckDate())));
+        text.append("\n");
+        text.append(formatLine("| Тип транзакции: ", "Пополнение"));
+        text.append("\n");
+        text.append(formatLine("| Банк получателя: ", paymentCheck.getTargetBankName()));
+        text.append("\n");
+        text.append(formatLine("| Счет получателя: ", paymentCheck.getTargetAccountNumber()));
+        text.append("\n");
+        text.append(formatLine("| Сумма: ", paymentCheck.getAmount().setScale(2) + " " + account.getCurrency()));
+        text.append("\n");
+        text.append(firstAndLastLine());
+        return text;
+    }
+
     private StringBuilder getBankCheckForReplenishment(Account sourceAccount, PaymentCheck paymentCheck) {
         StringBuilder text = new StringBuilder();
         text.append(firstAndLastLine());
@@ -64,7 +164,7 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
         text.append("\n");
         text.append(formatLine("| " + formatDate(paymentCheck.getPaymentCheckDate()), formatTime(paymentCheck.getPaymentCheckDate())));
         text.append("\n");
-        text.append(formatLine("| Тип транзакции: ", paymentCheck.getTransactionType().name()));
+        text.append(formatLine("| Тип транзакции: ", "Перевод"));
         text.append("\n");
         text.append(formatLine("| Банк отправителя: ", paymentCheck.getSourceBankName()));
         text.append("\n");

@@ -25,7 +25,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public synchronized void deposit(Long id, Currency currency, Double deposit) throws Exception {
+    public synchronized Transaction deposit(Long id, Currency currency, Double deposit) throws Exception {
         Transaction transaction = new Transaction();
         transaction.setSourceAccountId(null);
         transaction.setTargetAccountId(id);
@@ -35,19 +35,20 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setTransactionType(TransactionType.DEPOSIT);
         transaction.setStatus(Status.APPROVED);
         transactionRepository.saveTransaction(transaction);
-    }
-
-    @Override
-    public synchronized Transaction save(Transaction transaction) throws Exception {
-        logger.info("Trying to save transaction: {}", transaction);
-        boolean isTransactionSaved = transactionRepository.saveTransaction(transaction);
-        String success = isTransactionSaved ? "" : "not ";
-        logger.info("Transaction was {}saved: {}", success, transaction);
         return transaction;
     }
 
     @Override
-    public synchronized void withdrawal(Long id, Currency currency, Double deposit) throws Exception {
+    public synchronized Transaction save(Transaction transaction) throws Exception {
+        logger.info("Сохраняем транзакцию: {}", transaction);
+        boolean isTransactionSaved = transactionRepository.saveTransaction(transaction);
+        String success = isTransactionSaved ? "" : "не";
+        logger.info("Транзакция {} сохранена: {}", success, transaction);
+        return transaction;
+    }
+
+    @Override
+    public synchronized Transaction withdrawal(Long id, Currency currency, Double deposit) throws Exception {
         Transaction transaction = new Transaction();
         transaction.setSourceAccountId(null);
         transaction.setTargetAccountId(id);
@@ -57,5 +58,6 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setTransactionType(TransactionType.WITHDRAWAL);
         transaction.setStatus(Status.APPROVED);
         transactionRepository.saveTransaction(transaction);
+        return transaction;
     }
 }

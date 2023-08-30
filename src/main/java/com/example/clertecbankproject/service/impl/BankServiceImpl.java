@@ -29,9 +29,9 @@ public class BankServiceImpl implements BankService {
     @Override
     public void addBank() throws Exception {
         Bank bank = new Bank();
-        logger.info("Input information about Bank");
+        logger.info("Введите информацию о БАНКЕ");
         Scanner scanner = new Scanner(System.in);
-        logger.info("Name: ");
+        logger.info("Наименование БАНКА: ");
         String nameOfBank = scanner.nextLine();
         bank.setBankName(nameOfBank);
         saveBank(bank);
@@ -39,7 +39,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public void getAllBanks() throws Exception {
-        logger.info("Show all banks");
+        logger.info("Отобразить все банки");
         repository.getAllBanks().forEach(LOG_ACTION);
 
     }
@@ -47,7 +47,7 @@ public class BankServiceImpl implements BankService {
     @Override
     public void deleteBank() throws Exception {
         Long idForDelete;
-        logger.info("Input id bank for delete");
+        logger.info("Введите id БАНКА для удаления:");
         Scanner scanner = new Scanner(System.in);
         idForDelete = scanner.nextLong();
         deleteBank(idForDelete);
@@ -56,15 +56,15 @@ public class BankServiceImpl implements BankService {
     @Override
     public Bank getBank() throws Exception {
         Long idForShow;
-        logger.info("Input id bank for show");
+        logger.info("Введите id БАНКА для отображения:");
         Scanner scanner = new Scanner(System.in);
         idForShow = scanner.nextLong();
-        logger.info("Trying to get bank with id = '{}'", idForShow);
+        logger.info("Получение БАНКА по id = '{}'", idForShow);
         Bank bank = repository.getBank(idForShow);
         if (bank.getId()==null) {
-            logger.debug("Bank with id={} don't exist",idForShow);
+            logger.debug("БАНК с id={} не существует!",idForShow);
         } else {
-            logger.debug("Bank with id= '{}', {}", bank.getId(), bank.getBankName());
+            logger.debug("БАНК с id= '{}', {}", bank.getId(), bank.getBankName());
         }
         return bank;
     }
@@ -72,17 +72,17 @@ public class BankServiceImpl implements BankService {
     @Override
     public void updateBank() throws Exception {
         Long idForUpdate;
-        logger.info("Input id bank for update");
+        logger.info("Введите id БАНКА для обновления");
         Scanner scanner = new Scanner(System.in);
         idForUpdate = scanner.nextLong();
-        logger.info("Trying to get bank with id = '{}'", idForUpdate);
+        logger.info("Получение БАНКА по id = '{}'", idForUpdate);
         Bank bank = repository.getBank(idForUpdate);
         if (bank.getId()==null) {
-            logger.debug("Bank with id={} don't exist",idForUpdate);
+            logger.debug("БАНК с id={} не существует!",idForUpdate);
         } else {
-            logger.debug("Bank with id= '{}', {} found", bank.getId(), bank.getBankName());
-            logger.info("Input information about Bank");
-            logger.info("Name: ");
+            logger.debug("БАНК с id= '{}', {} найден", bank.getId(), bank.getBankName());
+            logger.info("Введите информацию о БАНКЕ");
+            logger.info("Наименование БАНКА: ");
             Scanner scanner1 = new Scanner(System.in);
             String nameOfBank = scanner1.nextLine();
             repository.updateBank(idForUpdate, nameOfBank);
@@ -93,10 +93,10 @@ public class BankServiceImpl implements BankService {
     public void addClientToBank() {
         Long idBank;
         Long idClient;
-        logger.info("Enter the id of the bank to which you want to add a client: ");
+        logger.info("Введите id БАНКА, в который надо добавить КЛИЕНТА:");
         Scanner scanner = new Scanner(System.in);
         idBank = scanner.nextLong();
-        logger.info("Enter the id of the client to be added: ");
+        logger.info("Введите КЛИЕНТА, которого надо добавить в БАНК: ");
         idClient = scanner.nextLong();
         repository.addClientToBank(idBank, idClient);
     }
@@ -104,21 +104,21 @@ public class BankServiceImpl implements BankService {
     @Override
     public void showAllBankClients() throws Exception{
         Long idBank;
-        logger.info("Enter the id of the bank to which you want to show all clients: ");
+        logger.info("ВВедите id БАНКА, для отображения всех его КЛИЕНТОВ: ");
         Scanner scanner = new Scanner(System.in);
         idBank = scanner.nextLong();
         repository.showAllBankClients(idBank).forEach(LOG_ACTION_CLIENTS);
     }
 
     public void deleteBank(Long id) throws Exception {
-        logger.info("Trying to delete bank with id= '{}'", id);
+        logger.info("Удаление БАНКА по id= '{}'", id);
         repository.deleteBank(id);
     }
 
     public void saveBank(Bank bank) throws Exception {
-        logger.info("Trying to save bank: {}", bank.getBankName());
+        logger.info("Сохранение БАНКА: {}", bank.getBankName());
         boolean isBankSaved = repository.saveBank(bank);
-        String success = isBankSaved ? "" : "not ";
-        logger.info("Bank was {}saved: {}", success, bank.getBankName());
+        String success = isBankSaved ? "" : "не";
+        logger.info("БАНК {} сохранен: {}", success, bank.getBankName());
     }
 }

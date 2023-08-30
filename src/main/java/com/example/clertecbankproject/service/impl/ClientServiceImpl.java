@@ -26,18 +26,18 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void addClient() throws Exception {
         Client client = new Client();
-        logger.info("Input information about Client");
+        logger.info("Введите информацию о КЛИЕНТЕ:");
         Scanner scanner = new Scanner(System.in);
-        logger.info("First name: ");
+        logger.info("Имя: ");
         String firstName = scanner.nextLine();
         client.setFirstName(firstName);
-        logger.info("Second name: ");
+        logger.info("Отчество: ");
         String secondName = scanner.nextLine();
         client.setSecondName(secondName);
-        logger.info("Last name: ");
+        logger.info("Фамилия: ");
         String lastName = scanner.nextLine();
         client.setLastName(lastName);
-        logger.info("Address: ");
+        logger.info("Адрес: ");
         String address = scanner.nextLine();
         client.setAddress(address);
         saveClient(client);
@@ -45,22 +45,22 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public void getAllClients() throws Exception {
-        logger.info("Show all clients");
+        logger.info("Отобразить всех клиентов:");
         clientRepository.getAllClients().forEach(LOG_ACTION);
     }
 
     @Override
     public Client getClient() throws Exception {
         Long idForShow;
-        logger.info("Input id client for show");
+        logger.info("Введите id КЛИЕНТА для отображения:");
         Scanner scanner = new Scanner(System.in);
         idForShow = scanner.nextLong();
-        logger.info("Trying to get client with id = '{}'", idForShow);
+        logger.info("Получение КЛИЕНТА по id = '{}'", idForShow);
         Client client = clientRepository.getClient(idForShow);
         if (client.getId()==null) {
-            logger.debug("Client with id={} don't exist",idForShow);
+            logger.debug("КЛИЕНТ с id={} не существует!",idForShow);
         } else {
-            logger.debug("Client with id= '{}', {}", client.getId(), client);
+            logger.debug("КЛИЕНТ с id= '{}', {}", client.getId(), client);
         }
         return client;
     }
@@ -68,7 +68,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void deleteClient() throws Exception {
         Long idForDelete;
-        logger.info("Input id client for delete");
+        logger.info("Введите id КЛИЕНТА для удаления:");
         Scanner scanner = new Scanner(System.in);
         idForDelete = scanner.nextLong();
         deleteClient(idForDelete);
@@ -77,30 +77,30 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public void updateClient() throws Exception {
         Long idForUpdate;
-        logger.info("Input id client for update");
+        logger.info("Введите id КЛИЕНТА для обновления");
         Scanner scanner = new Scanner(System.in);
         idForUpdate = scanner.nextLong();
-        logger.info("Trying to get bank with id = '{}'", idForUpdate);
+        logger.info("Получение КЛИЕНТА по id = '{}'", idForUpdate);
         Client client = clientRepository.getClient(idForUpdate);
         if (client.getId()==null) {
-            logger.debug("Client with id={} don't exist",idForUpdate);
+            logger.debug("КЛИЕНТ с id={} не существует!",idForUpdate);
         } else {
-            logger.debug("Client with id= '{}', {} found", client.getId(), client);
-            logger.info("Input information about Client");
+            logger.debug("КЛИЕНТ с id= '{}', {} найден", client.getId(), client);
+            logger.info("Введите информацию о КЛИЕНТЕ:");
             Scanner scanner1 = new Scanner(System.in);
-            logger.info("First name: ");
+            logger.info("Имя: ");
             String firstName = scanner1.nextLine();
             if(!firstName.isEmpty()){
                 client.setFirstName(firstName);}
-            logger.info("Second name: ");
+            logger.info("Отчество: ");
             String secondName = scanner1.nextLine();
             if(!secondName.isEmpty()){
                 client.setSecondName(secondName);}
-            logger.info("Last name: ");
+            logger.info("Фамилия: ");
             String lastName = scanner1.nextLine();
             if(!lastName.isEmpty()){
                 client.setLastName(lastName);}
-            logger.info("Address: ");
+            logger.info("Адрес: ");
             String address = scanner1.nextLine();
             if(!address.isEmpty()){
                 client.setAddress(address);}
@@ -109,14 +109,14 @@ public class ClientServiceImpl implements ClientService {
     }
 
     public void deleteClient(Long id) throws Exception {
-        logger.info("Trying to delete client with id= '{}'", id);
+        logger.info("Удаление КЛИЕНТА с id= '{}'", id);
         clientRepository.deleteClient(id);
     }
 
     public void saveClient(Client client) throws Exception {
-        logger.info("Trying to save client: {}", client);
+        logger.info("Сохранение КЛИЕНТА: {}", client);
         boolean isClientSaved = clientRepository.saveClient(client);
-        String success = isClientSaved ? "" : "not ";
-        logger.info("Client was {}saved: {}", success, client);
+        String success = isClientSaved ? "" : "не";
+        logger.info("КЛИЕНТ {} сохранен: {}", success, client);
     }
 }

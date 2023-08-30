@@ -1,6 +1,5 @@
 package com.example.clertecbankproject;
 
-import com.example.clertecbankproject.model.bd.postgresql.service.PostgreSQLCreateTables;
 import com.example.clertecbankproject.model.repository.*;
 import com.example.clertecbankproject.model.repository.impl.*;
 import com.example.clertecbankproject.service.*;
@@ -31,17 +30,17 @@ public class App {
         Scanner scanner = new Scanner(System.in);
         do {
             logger.info("_______________________________________________________________________");
-            logger.info("MAIN_MENU:");
+            logger.info("Главное МЕНЮ:");
             logger.info("---------------------------");
-            logger.info("Enter 0 to exit the application");
-            logger.info("Enter 1 to BANK_OPERATION_MENU");
-            logger.info("Enter 2 to CLIENT_OPERATION_MENU");
-            logger.info("Enter 3 to ACCOUNT_OPERATION_MENU");
+            logger.info("Введите 0 для выхода из приложения");
+            logger.info("Введите 1 для входа в МЕНЮ операций над БАНКАМИ");
+            logger.info("Введите 2 для входа в МЕНЮ операций над КЛИЕНТАМИ");
+            logger.info("Введите 3 для входа в МЕНЮ операций над СЧЕТАМИ");
             logger.info("_______________________________________________________________________");
             userInput = scanner.nextInt();
             switch (userInput) {
                 case 0:
-                    logger.info("Goodbye!");
+                    logger.info("До свидания! Хорошего дня!");
                     break;
                 case 1:
                     bankOperationMenu(scanner);
@@ -53,7 +52,7 @@ public class App {
                     accountOperationMenu(scanner);
                     break;
                 default:
-                    logger.info("There is no such option, please choose another option.");
+                    logger.info("Нет такой операции, пожалуйста, попробуйте другую операцию!");
             }
         }
         while (userInput != 0);
@@ -63,21 +62,21 @@ public class App {
         int userInput;
         do {
             logger.info("_______________________________________________________________________");
-            logger.info("ACCOUNT_OPERATION_MENU:");
+            logger.info("МЕНЮ операций над СЧЕТАМИ:");
             logger.info("---------------------------");
-            logger.info("Enter 0 to exit MAIN_MENU");
-            logger.info("Enter 1 to show all accounts");
-            logger.info("Enter 2 to show account by id");
-            logger.info("Enter 3 to add account");
-            logger.info("Enter 4 to deposit account");
-            logger.info("Enter 5 to replenishment money");
-            logger.info("Enter 6 to withdrawal money");
-            logger.info("Enter 7 to delete account");
+            logger.info("Введите 0 для выхода в Главное МЕНЮ");
+            logger.info("Введите 1 для отображения всех счетов клиента");
+            logger.info("Введите 2 для отображения счета по id");
+            logger.info("Введите 3 для добавления счета");
+            logger.info("Введите 4 для пополнения счета");
+            logger.info("Введите 5 для перевода денег");
+            logger.info("Введите 6 для снятия денег");
+            logger.info("Введите 7 для удаления счета");
             logger.info("_______________________________________________________________________");
             userInput = scanner.nextInt();
             switch (userInput) {
                 case 0:
-                    logger.info("Exit to MAIN_MENU!");
+                    logger.info("Возврат в Главное МЕНЮ!");
                     break;
                 case 1:
                     ACCOUNT_SERVICE.getAllClientAccounts();
@@ -89,7 +88,7 @@ public class App {
                     ACCOUNT_SERVICE.addAccount();
                     break;
                 case 4:
-                    ACCOUNT_SERVICE.depositAccount();
+                    ACCOUNT_SERVICE.depositMoney();
                     break;
                 case 5:
                     ACCOUNT_SERVICE.replenishmentMoney();
@@ -101,7 +100,7 @@ public class App {
                     ACCOUNT_SERVICE.deleteAccount();
                     break;
                 default:
-                    logger.info("There is no such option, please choose another option.");
+                    logger.info("ет такой операции, пожалуйста, попробуйте другую операцию!");
             }
         } while (userInput != 0);
     }
@@ -110,19 +109,19 @@ public class App {
         int userInput;
         do {
             logger.info("_______________________________________________________________________");
-            logger.info("CLIENT_OPERATION_MENU:");
+            logger.info("МЕНЮ операций над КЛИЕНТАМИ:");
             logger.info("---------------------------");
-            logger.info("Enter 0 to exit MAIN_MENU");
-            logger.info("Enter 1 to show all clients");
-            logger.info("Enter 2 to show client by id");
-            logger.info("Enter 3 to add client");
-            logger.info("Enter 4 to update client");
-            logger.info("Enter 5 to delete client");
+            logger.info("Введите 0 для выхода в Главное МЕНЮ");
+            logger.info("Введите 1 для отображения всех клиентов");
+            logger.info("Введите 2 для отображения клиента по id");
+            logger.info("Введите 3 для добавления клиента");
+            logger.info("Введите 4 для обновления клиента");
+            logger.info("Введите 5 для удаления клиента");
             logger.info("_______________________________________________________________________");
             userInput = scanner.nextInt();
             switch (userInput) {
                 case 0:
-                    logger.info("Exit to MAIN_MENU!");
+                    logger.info("Возврат в Главное МЕНЮ!");
                     break;
                 case 1:
                     CLIENT_SERVICE.getAllClients();
@@ -140,7 +139,7 @@ public class App {
                     CLIENT_SERVICE.deleteClient();
                     break;
                 default:
-                    logger.info("There is no such option, please choose another option.");
+                    logger.info("Нет такой операции, пожалуйста, попробуйте другую операцию!");
             }
         } while (userInput != 0);
     }
@@ -149,21 +148,21 @@ public class App {
         int userInput;
         do {
             logger.info("_______________________________________________________________________");
-            logger.info("BANK_OPERATION_MENU:");
+            logger.info("МЕНЮ операций над БАНКАМИ:");
             logger.info("---------------------------");
-            logger.info("Enter 0 to exit MAIN_MENU");
-            logger.info("Enter 1 to show all banks");
-            logger.info("Enter 2 to show bank by id");
-            logger.info("Enter 3 to add bank");
-            logger.info("Enter 4 to update bank");
-            logger.info("Enter 5 to delete bank");
-            logger.info("Enter 6 to add client to bank");
-            logger.info("Enter 7 to show all bank clients");
+            logger.info("Введите 0 для выхода в Главное МЕНЮ");
+            logger.info("Введите 1 для отображения всех банков");
+            logger.info("Введите 2 для отображения банка по id");
+            logger.info("Введите 3 для добавления банка");
+            logger.info("Введите 4 для обновления банка");
+            logger.info("Введите 5 для удаления банка");
+            logger.info("Введите 6 для добавления клиента в банк");
+            logger.info("Введите 7 для отображения всех банков клиента");
             logger.info("_______________________________________________________________________");
             userInput = scanner.nextInt();
             switch (userInput) {
                 case 0:
-                    logger.info("Exit to MAIN_MENU!");
+                    logger.info("Возврат в Главное МЕНЮ!");
                     break;
                 case 1:
                     BANK_SERVICE.getAllBanks();
@@ -187,7 +186,7 @@ public class App {
                     BANK_SERVICE.showAllBankClients();
                     break;
                 default:
-                    logger.info("There is no such option, please choose another option.");
+                    logger.info("Нет такой операции, пожалуйста, попробуйте другую операцию!");
             }
         } while (userInput != 0);
     }
