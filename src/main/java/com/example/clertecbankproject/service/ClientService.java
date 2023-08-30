@@ -8,4 +8,6 @@ public interface ClientService {
     Client getClient() throws Exception;
     void deleteClient () throws Exception;
     void updateClient () throws Exception;
+
+    Client getClientById(Long id) throws Exception;
 }

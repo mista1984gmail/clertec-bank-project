@@ -26,13 +26,13 @@ public class App {
     public static final TransactionService TRANSACTION_SERVICE = new TransactionServiceImpl();
     private static final InterestDateRepository INTEREST_DATE_REPOSITORY = new InterestDateRepositoryImpl();
     public static final PaymentCheckService PAYMENT_CHECK_SERVICE = new PaymentCheckServiceImpl(BANK_REPOSITORY, BILL_NUMBER_REPOSITORY);
-    public static final AccountService ACCOUNT_SERVICE = new AccountServiceImpl(ACCOUNT_REPOSITORY, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE);
+    public static final AccountService ACCOUNT_SERVICE = new AccountServiceImpl(ACCOUNT_REPOSITORY, CLIENT_SERVICE, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE);
 
     public static void main(String[] args) throws Exception {
 /*        PostgreSQLCreateTables postgreSQLCreateTables = new PostgreSQLCreateTables();
         postgreSQLCreateTables.createTablesInDataBase();*/
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(new InterestCalculationScheduledExecutor(INTEREST_DATE_REPOSITORY, ACCOUNT_REPOSITORY, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE), 0, 1, TimeUnit.MINUTES);
+        //ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        //scheduler.scheduleAtFixedRate(new InterestCalculationScheduledExecutor(INTEREST_DATE_REPOSITORY, ACCOUNT_REPOSITORY, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE), 0, 1, TimeUnit.MINUTES);
 
         int userInput = 0;
         Scanner scanner = new Scanner(System.in);
@@ -79,7 +79,8 @@ public class App {
             logger.info("Введите 4 для пополнения счета");
             logger.info("Введите 5 для перевода денег");
             logger.info("Введите 6 для снятия денег");
-            logger.info("Введите 7 для удаления счета");
+            logger.info("Введите 7 для формирования выписки по счету");
+            logger.info("Введите 8 для удаления счета");
             logger.info("_______________________________________________________________________");
             userInput = scanner.nextInt();
             switch (userInput) {
@@ -105,6 +106,9 @@ public class App {
                     ACCOUNT_SERVICE.withdrawalMoney();
                     break;
                 case 7:
+                    ACCOUNT_SERVICE.generationAccountStatement();
+                    break;
+                case 8:
                     ACCOUNT_SERVICE.deleteAccount();
                     break;
                 default:
