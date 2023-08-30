@@ -1,6 +1,8 @@
 package com.example.clertecbankproject.service.impl;
 
 import com.example.clertecbankproject.model.entity.*;
+import com.example.clertecbankproject.model.entity.util.BillNumber;
+import com.example.clertecbankproject.model.entity.util.PaymentCheck;
 import com.example.clertecbankproject.model.repository.BankRepository;
 import com.example.clertecbankproject.model.repository.BillNumberRepository;
 import com.example.clertecbankproject.service.PaymentCheckService;
@@ -108,6 +110,56 @@ public class PaymentCheckServiceImpl implements PaymentCheckService {
             System.out.println(ex.getMessage());
         }
         billNumberRepository.saveBillNumber(new BillNumber(numberOfBill));
+    }
+
+    @Override
+    public void createPaymentCheckForInterestCalculation(Account account, Double deposit, TransactionType transactionType) throws Exception {
+        PaymentCheck paymentCheck = new PaymentCheck();
+        Bank targetBank = repository.getBank(account.getBankId());
+        String targetBankName = targetBank.getBankName();
+        Long numberOfBill = billNumberRepository.getCountBills() + 1L;
+        paymentCheck.setNumber(numberOfBill);
+        paymentCheck.setPaymentCheckDate(LocalDateTime.now());
+        paymentCheck.setTransactionType(transactionType);
+        paymentCheck.setSourceBankName(null);
+        paymentCheck.setTargetBankName(targetBankName);
+        paymentCheck.setSourceAccountNumber(null);
+        paymentCheck.setTargetAccountNumber(account.getAccountNumber());
+        paymentCheck.setAmount(new BigDecimal(deposit));
+        logger.info("{}",paymentCheck);
+        String file = "src/main/resources/bills/" + numberOfBill + "bill.txt";
+        try(FileWriter writer = new FileWriter(file, false))
+        {
+            StringBuilder text = getBankCheckForInterestCalculation(account, paymentCheck);
+            writer.write(text.toString());
+            writer.flush();
+        }
+        catch(IOException ex){
+            System.out.println(ex.getMessage());
+        }
+        billNumberRepository.saveBillNumber(new BillNumber(numberOfBill));
+    }
+
+    private StringBuilder getBankCheckForInterestCalculation(Account account, PaymentCheck paymentCheck) {
+        StringBuilder text = new StringBuilder();
+        text.append(firstAndLastLine());
+        text.append("\n");
+        text.append(bankCheckLine("Банковский Чек"));
+        text.append("\n");
+        text.append(formatLine("| Чек: ", paymentCheck.getNumber().toString()));
+        text.append("\n");
+        text.append(formatLine("| " + formatDate(paymentCheck.getPaymentCheckDate()), formatTime(paymentCheck.getPaymentCheckDate())));
+        text.append("\n");
+        text.append(formatLine("| Тип транзакции: ", "Начисление процентов"));
+        text.append("\n");
+        text.append(formatLine("| Банк получателя: ", paymentCheck.getTargetBankName()));
+        text.append("\n");
+        text.append(formatLine("| Счет получателя: ", paymentCheck.getTargetAccountNumber()));
+        text.append("\n");
+        text.append(formatLine("| Сумма: ", paymentCheck.getAmount().setScale(2) + " " + account.getCurrency()));
+        text.append("\n");
+        text.append(firstAndLastLine());
+        return text;
     }
 
     private StringBuilder getBankCheckForWithdrawal(Account account, PaymentCheck paymentCheck) {

@@ -123,6 +123,50 @@ public class AccountRepositoryImpl implements AccountRepository {
         return accounts;
     }
 
+    @Override
+    public List<Account> getAllAccounts() throws Exception {
+        Connection connection = null;
+        List<Account> accounts = new ArrayList<>();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+
+        try {
+            logger.info("Connecting to a database...");
+            connection = JDBCPostgreSQLConnection.getConnection();
+            logger.info("Connected database successfully...");
+            String selectTableSQL = "select * from accounts";
+            PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Account account = new Account();
+                Long accountId = Long.parseLong(rs.getString("id"));
+                String accountNumber = rs.getString("account_number");
+                Long clientId = Long.parseLong(rs.getString("client_id"));
+                Long bankId = Long.parseLong(rs.getString("bank_id"));
+                BigDecimal balance = BigDecimal.valueOf(Float.parseFloat(rs.getString("balance")));
+                Currency currency = Currency.valueOf(rs.getString("currency"));
+                LocalDateTime registrationDate = LocalDateTime.parse(rs.getString("registration_date"), formatter);
+                account.setId(accountId);
+                account.setAccountNumber(accountNumber);
+                account.setClientId(clientId);
+                account.setBankId(bankId);
+                account.setBalance(balance);
+                account.setCurrency(currency);
+                account.setRegistrationDate(registrationDate);
+                accounts.add(account);
+            }
+        } catch (SQLException e) {
+            logger.error(e.getMessage());
+        }
+        return accounts;
+    }
+
+    @Override
+    public void setDeposit(Long id, BigDecimal deposit) {
+        String insertTableSQL = "update accounts a set balance = "
+                + deposit + "where id = " + id;
+        executeStatement(insertTableSQL);
+    }
+
     public void executeStatement(String sql){
         Connection connection = null;
         Statement statement = null;
