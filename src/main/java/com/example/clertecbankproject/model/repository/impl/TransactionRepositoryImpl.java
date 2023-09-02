@@ -73,6 +73,14 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
         return transactions;
     }
 
