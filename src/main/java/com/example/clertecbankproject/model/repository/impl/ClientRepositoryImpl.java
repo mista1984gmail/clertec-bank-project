@@ -30,9 +30,7 @@ public class ClientRepositoryImpl implements ClientRepository {
         Connection connection = null;
         List<Client> clients = new ArrayList<>();
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "SELECT * from clients";
             PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
             ResultSet rs = pstmt.executeQuery();
@@ -56,9 +54,7 @@ public class ClientRepositoryImpl implements ClientRepository {
         Connection connection = null;
         Client client = new Client();
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "SELECT * from clients where id = " + id;
             PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
             ResultSet rs = pstmt.executeQuery();
@@ -108,9 +104,7 @@ public class ClientRepositoryImpl implements ClientRepository {
         Connection connection = null;
         Statement statement = null;
         try{
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             statement = connection.createStatement();
             statement.execute(sql);
         }catch(SQLException se){

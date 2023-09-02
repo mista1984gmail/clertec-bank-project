@@ -36,11 +36,9 @@ public class AccountRepositoryImpl implements AccountRepository {
     public Account getAccount(Long id) throws Exception {
         Connection connection = null;
         Account account = new Account();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSS");
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "SELECT * from accounts where id = " + id;
             PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
             ResultSet rs = pstmt.executeQuery();
@@ -51,7 +49,9 @@ public class AccountRepositoryImpl implements AccountRepository {
                 Long bankId = Long.parseLong(rs.getString("bank_id"));
                 BigDecimal balance = BigDecimal.valueOf(Float.parseFloat(rs.getString("balance")));
                 Currency currency = Currency.valueOf(rs.getString("currency"));
-                LocalDateTime registrationDate = LocalDateTime.parse(rs.getString("registration_date"), formatter);
+                String registrationTimeString = rs.getString("registration_date");
+                String subRegistrationTimeString = registrationTimeString.substring(0, 24);
+                LocalDateTime registrationDate = LocalDateTime.parse(subRegistrationTimeString, formatter);
                 account.setId(accountId);
                 account.setAccountNumber(accountNumber);
                 account.setClientId(clientId);
@@ -89,12 +89,10 @@ public class AccountRepositoryImpl implements AccountRepository {
     public List<AccountDto> getAllClientAccounts(Long idForShow) throws Exception {
         Connection connection = null;
         List<AccountDto> accounts = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSS");
 
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "select a.id, a.account_number, a.balance, a.currency, a.registration_date, b.bank_name " +
                     "from accounts a, banks b " +
                     "where  a.bank_id = b.id and a.client_id = " + idForShow;
@@ -106,7 +104,9 @@ public class AccountRepositoryImpl implements AccountRepository {
                 String accountNumber = rs.getString("account_number");
                 BigDecimal balance = BigDecimal.valueOf(Float.parseFloat(rs.getString("balance")));
                 Currency currency = Currency.valueOf(rs.getString("currency"));
-                LocalDateTime registrationDate = LocalDateTime.parse(rs.getString("registration_date"), formatter);
+                String registrationTimeString = rs.getString("registration_date");
+                String subRegistrationTimeString = registrationTimeString.substring(0, 24);
+                LocalDateTime registrationDate = LocalDateTime.parse(subRegistrationTimeString, formatter);
                 String bankName = rs.getString("bank_name");
 
                 account.setId(accountId);
@@ -127,12 +127,10 @@ public class AccountRepositoryImpl implements AccountRepository {
     public List<Account> getAllAccounts() throws Exception {
         Connection connection = null;
         List<Account> accounts = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSS");
 
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "select * from accounts";
             PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
             ResultSet rs = pstmt.executeQuery();
@@ -144,7 +142,9 @@ public class AccountRepositoryImpl implements AccountRepository {
                 Long bankId = Long.parseLong(rs.getString("bank_id"));
                 BigDecimal balance = BigDecimal.valueOf(Float.parseFloat(rs.getString("balance")));
                 Currency currency = Currency.valueOf(rs.getString("currency"));
-                LocalDateTime registrationDate = LocalDateTime.parse(rs.getString("registration_date"), formatter);
+                String registrationTimeString = rs.getString("registration_date");
+                String subRegistrationTimeString = registrationTimeString.substring(0, 24);
+                LocalDateTime registrationDate = LocalDateTime.parse(subRegistrationTimeString, formatter);
                 account.setId(accountId);
                 account.setAccountNumber(accountNumber);
                 account.setClientId(clientId);
@@ -171,9 +171,7 @@ public class AccountRepositoryImpl implements AccountRepository {
         Connection connection = null;
         Statement statement = null;
         try{
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             statement = connection.createStatement();
             statement.execute(sql);
         }catch(SQLException se){

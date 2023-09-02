@@ -1,7 +1,6 @@
 package com.example.clertecbankproject.model.repository.impl;
 
 import com.example.clertecbankproject.model.bd.postgresql.JDBCPostgreSQLConnection;
-import com.example.clertecbankproject.model.entity.Client;
 import com.example.clertecbankproject.model.entity.util.InterestDate;
 import com.example.clertecbankproject.model.repository.InterestDateRepository;
 import org.slf4j.Logger;
@@ -29,17 +28,17 @@ public class InterestDateRepositoryImpl implements InterestDateRepository {
     public List<InterestDate> getAllInterestDate() throws Exception {
         Connection connection = null;
         List<InterestDate> interestDates = new ArrayList<>();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSS");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSS");
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "SELECT * from interest_date_calculation";
             PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 Long id = Long.parseLong(rs.getString("id"));
-                LocalDateTime interestDateCalculation = LocalDateTime.parse(rs.getString("interest_date"), formatter);
+                String interestTimeString = rs.getString("interest_date");
+                String subInterestTimeString = interestTimeString.substring(0, 24);
+                LocalDateTime interestDateCalculation = LocalDateTime.parse(subInterestTimeString, formatter);
                 InterestDate interestDate = new InterestDate(id, interestDateCalculation);
                 interestDates.add(interestDate);
             }
@@ -55,9 +54,7 @@ public class InterestDateRepositoryImpl implements InterestDateRepository {
         Connection connection = null;
         Statement statement = null;
         try{
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             statement = connection.createStatement();
             statement.execute(sql);
         }catch(SQLException se){

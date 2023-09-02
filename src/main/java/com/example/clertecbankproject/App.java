@@ -1,6 +1,8 @@
 package com.example.clertecbankproject;
 
+import com.example.clertecbankproject.model.bd.postgresql.BootstrapDataBasePostgreSQL;
 import com.example.clertecbankproject.model.bd.postgresql.service.PostgreSQLCreateTables;
+import com.example.clertecbankproject.model.entity.util.StatementNumber;
 import com.example.clertecbankproject.model.repository.*;
 import com.example.clertecbankproject.model.repository.impl.*;
 import com.example.clertecbankproject.service.*;
@@ -19,18 +21,20 @@ public class App {
     public static final BankRepository BANK_REPOSITORY = new BankRepositoryImpl();
     public static final TransactionRepository TRANSACTION_REPOSITORY = new TransactionRepositoryImpl();
     public static final BillNumberRepository BILL_NUMBER_REPOSITORY = new BillNumberRepositoryImpl();
+    public static final StatementNumberRepository STATEMENT_NUMBER_REPOSITORY = new StatementNumberRepositoryImpl();
     public static final BankService BANK_SERVICE = new BankServiceImpl(BANK_REPOSITORY);
     public static final ClientRepository CLIENT_REPOSITORY = new ClientRepositoryImpl();
     public static final ClientService CLIENT_SERVICE = new ClientServiceImpl(CLIENT_REPOSITORY);
     public static final AccountRepository ACCOUNT_REPOSITORY = new AccountRepositoryImpl();
     public static final TransactionService TRANSACTION_SERVICE = new TransactionServiceImpl();
     private static final InterestDateRepository INTEREST_DATE_REPOSITORY = new InterestDateRepositoryImpl();
-    public static final PaymentCheckService PAYMENT_CHECK_SERVICE = new PaymentCheckServiceImpl(BANK_REPOSITORY, BILL_NUMBER_REPOSITORY);
+    public static final PaymentCheckService PAYMENT_CHECK_SERVICE = new PaymentCheckServiceImpl(BANK_REPOSITORY, BILL_NUMBER_REPOSITORY, ACCOUNT_REPOSITORY, CLIENT_REPOSITORY, STATEMENT_NUMBER_REPOSITORY);
     public static final AccountService ACCOUNT_SERVICE = new AccountServiceImpl(ACCOUNT_REPOSITORY, CLIENT_SERVICE, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE);
 
     public static void main(String[] args) throws Exception {
-/*        PostgreSQLCreateTables postgreSQLCreateTables = new PostgreSQLCreateTables();
-        postgreSQLCreateTables.createTablesInDataBase();*/
+        PostgreSQLCreateTables postgreSQLCreateTables = new PostgreSQLCreateTables();
+        postgreSQLCreateTables.createTablesInDataBase();
+        BootstrapDataBasePostgreSQL.fillDataBase();
         //ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
         //scheduler.scheduleAtFixedRate(new InterestCalculationScheduledExecutor(INTEREST_DATE_REPOSITORY, ACCOUNT_REPOSITORY, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE), 0, 1, TimeUnit.MINUTES);
 

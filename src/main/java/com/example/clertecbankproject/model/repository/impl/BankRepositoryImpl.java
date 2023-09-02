@@ -28,9 +28,7 @@ public class BankRepositoryImpl implements BankRepository {
         Connection connection = null;
         List<Bank> banks = new ArrayList<>();
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "SELECT * from banks";
             PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
             ResultSet rs = pstmt.executeQuery();
@@ -63,9 +61,7 @@ public class BankRepositoryImpl implements BankRepository {
         Connection connection = null;
         Bank bank = new Bank();
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "SELECT * from banks where id = " + id;
             PreparedStatement pstmt = connection.prepareStatement(selectTableSQL);
             ResultSet rs = pstmt.executeQuery();
@@ -103,9 +99,7 @@ public class BankRepositoryImpl implements BankRepository {
         Connection connection = null;
         List<Client> clients = new ArrayList<>();
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "SELECT c.id, c.first_name, c.second_name, c.last_name, c.address " +
                     "from clients c " +
                     "left join bank_clients bc " +
@@ -133,9 +127,7 @@ public class BankRepositoryImpl implements BankRepository {
         Connection connection = null;
         Statement statement = null;
         try{
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             statement = connection.createStatement();
             statement.execute(sql);
         }catch(SQLException se){

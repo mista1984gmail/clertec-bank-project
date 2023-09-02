@@ -45,9 +45,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         LocalDate endLocalDate = LocalDate.of(Integer.parseInt(endDateSplit[2]), Integer.parseInt(endDateSplit[1]), Integer.parseInt(endDateSplit[0]));
         LocalDate endOfPeriod = endLocalDate.plusDays(1);
         try {
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             String selectTableSQL = "select * from transactions t " +
                     "where t.target_account_id = " + id + " " +
                     "and t.status = 'APPROVED' " +
@@ -82,9 +80,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         Connection connection = null;
         Statement statement = null;
         try{
-            logger.info("Connecting to a database...");
             connection = JDBCPostgreSQLConnection.getConnection();
-            logger.info("Connected database successfully...");
             statement = connection.createStatement();
             statement.execute(sql);
         }catch(SQLException se){
