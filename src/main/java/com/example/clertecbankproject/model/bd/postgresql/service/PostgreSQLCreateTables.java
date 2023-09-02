@@ -12,7 +12,6 @@ public class PostgreSQLCreateTables {
     public void createTablesInDataBase(){
         createTables.put(JDBCCreateTableClient.ACCOUNT_TABLE_NAME, JDBCCreateTableClient.TABLE_ACCOUNT_SQL_CREATE);
         createTables.put(JDBCCreateTableAccount.CLIENT_TABLE_NAME, JDBCCreateTableAccount.TABLE_CLIENT_SQL_CREATE);
-        createTables.put(JDBCCreateTableClientAccount.CLIENT_ACCOUNT_TABLE_NAME, JDBCCreateTableClientAccount.TABLE_CLIENT_ACCOUNT_SQL_CREATE);
         createTables.put(JDBCCreateTableBank.BANK_TABLE_NAME, JDBCCreateTableBank.TABLE_BANK_SQL_CREATE);
         createTables.put(JDBCCreateTableBankClient.BANK_CLIENT_TABLE_NAME, JDBCCreateTableBankClient.TABLE_BANK_CLIENT_SQL_CREATE);
         createTables.put(JDBCCreateTableTransaction.TRANSACTION_TABLE_NAME, JDBCCreateTableTransaction.TABLE_TRANSACTION_SQL_CREATE);

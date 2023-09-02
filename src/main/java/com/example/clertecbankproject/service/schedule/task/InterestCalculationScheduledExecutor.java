@@ -52,7 +52,7 @@ public class InterestCalculationScheduledExecutor implements Runnable{
                 .map(e ->e.format(formatter))
                 .collect(Collectors.toList());
         YearMonth month = YearMonth.now();
-        String endDay = month.atEndOfMonth().minusDays(1).toString();
+        String endDay = month.atEndOfMonth().toString();
         LocalDateTime localDateTimeNow = LocalDateTime.now();
         String formatDateTimeNow = localDateTimeNow.format(formatter);
         if(endDay.equals(formatDateTimeNow)){
