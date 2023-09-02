@@ -96,7 +96,7 @@ public class BankServiceImpl implements BankService {
         logger.info("Введите id БАНКА, в который надо добавить КЛИЕНТА:");
         Scanner scanner = new Scanner(System.in);
         idBank = scanner.nextLong();
-        logger.info("Введите КЛИЕНТА, которого надо добавить в БАНК: ");
+        logger.info("Введите id КЛИЕНТА, которого надо добавить в БАНК: ");
         idClient = scanner.nextLong();
         repository.addClientToBank(idBank, idClient);
     }
