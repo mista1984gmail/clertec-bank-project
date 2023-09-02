@@ -1,5 +1,8 @@
 package com.example.clertecbankproject.app;
 
+import com.example.clertecbankproject.front.AccountFront;
+import com.example.clertecbankproject.front.BankFront;
+import com.example.clertecbankproject.front.ClientFront;
 import com.example.clertecbankproject.model.bd.postgresql.service.BootstrapDataBasePostgreSQL;
 import com.example.clertecbankproject.model.bd.postgresql.service.PostgreSQLCreateTables;
 import com.example.clertecbankproject.model.repository.*;
@@ -28,7 +31,10 @@ public class AppRun {
     public static final TransactionService TRANSACTION_SERVICE = new TransactionServiceImpl();
     private static final InterestDateRepository INTEREST_DATE_REPOSITORY = new InterestDateRepositoryImpl();
     public static final PaymentCheckService PAYMENT_CHECK_SERVICE = new PaymentCheckServiceImpl(BANK_REPOSITORY, BILL_NUMBER_REPOSITORY, ACCOUNT_REPOSITORY, CLIENT_REPOSITORY, STATEMENT_NUMBER_REPOSITORY);
-    public static final AccountService ACCOUNT_SERVICE = new AccountServiceImpl(ACCOUNT_REPOSITORY, CLIENT_SERVICE, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE);
+    public static final AccountService ACCOUNT_SERVICE = new AccountServiceImpl(ACCOUNT_REPOSITORY);
+    public static final ClientFront CLIENT_FRONT = new ClientFront(CLIENT_SERVICE);
+    public static final BankFront BANK_FRONT = new BankFront(BANK_SERVICE);
+    public static final AccountFront ACCOUNT_FRONT = new AccountFront(ACCOUNT_SERVICE, CLIENT_SERVICE, TRANSACTION_SERVICE, PAYMENT_CHECK_SERVICE);
 
     public void runApplication() throws Exception {
         //Для создания таблиц
@@ -98,28 +104,28 @@ public class AppRun {
                     logger.info("Возврат в Главное МЕНЮ!");
                     break;
                 case 1:
-                    ACCOUNT_SERVICE.getAllClientAccounts();
+                    ACCOUNT_FRONT.getAllClientAccounts();
                     break;
                 case 2:
-                    ACCOUNT_SERVICE.getAccount();
+                    ACCOUNT_FRONT.getAccount();
                     break;
                 case 3:
-                    ACCOUNT_SERVICE.addAccount();
+                    ACCOUNT_FRONT.addAccount();
                     break;
                 case 4:
-                    ACCOUNT_SERVICE.depositMoney();
+                    ACCOUNT_FRONT.depositMoney();
                     break;
                 case 5:
-                    ACCOUNT_SERVICE.replenishmentMoney();
+                    ACCOUNT_FRONT.replenishmentMoney();
                     break;
                 case 6:
-                    ACCOUNT_SERVICE.withdrawalMoney();
+                    ACCOUNT_FRONT.withdrawalMoney();
                     break;
                 case 7:
-                    ACCOUNT_SERVICE.generationAccountStatement();
+                    ACCOUNT_FRONT.generationAccountStatement();
                     break;
                 case 8:
-                    ACCOUNT_SERVICE.deleteAccount();
+                    ACCOUNT_FRONT.deleteAccount();
                     break;
                 default:
                     logger.info("Нет такой операции, пожалуйста, попробуйте другую операцию!");
@@ -146,19 +152,19 @@ public class AppRun {
                     logger.info("Возврат в Главное МЕНЮ!");
                     break;
                 case 1:
-                    CLIENT_SERVICE.getAllClients();
+                    CLIENT_FRONT.getAllClients();
                     break;
                 case 2:
-                    CLIENT_SERVICE.getClient();
+                    CLIENT_FRONT.getClient();
                     break;
                 case 3:
-                    CLIENT_SERVICE.addClient();
+                    CLIENT_FRONT.addClient();
                     break;
                 case 4:
-                    CLIENT_SERVICE.updateClient();
+                    CLIENT_FRONT.updateClient();
                     break;
                 case 5:
-                    CLIENT_SERVICE.deleteClient();
+                    CLIENT_FRONT.deleteClient();
                     break;
                 default:
                     logger.info("Нет такой операции, пожалуйста, попробуйте другую операцию!");
@@ -187,25 +193,25 @@ public class AppRun {
                     logger.info("Возврат в Главное МЕНЮ!");
                     break;
                 case 1:
-                    BANK_SERVICE.getAllBanks();
+                    BANK_FRONT.getAllBanks();
                     break;
                 case 2:
-                    BANK_SERVICE.getBank();
+                    BANK_FRONT.getBank();
                     break;
                 case 3:
-                    BANK_SERVICE.addBank();
+                    BANK_FRONT.addBank();
                     break;
                 case 4:
-                    BANK_SERVICE.updateBank();
+                    BANK_FRONT.updateBank();
                     break;
                 case 5:
-                    BANK_SERVICE.deleteBank();
+                    BANK_FRONT.deleteBank();
                     break;
                 case 6:
-                    BANK_SERVICE.addClientToBank();
+                    BANK_FRONT.addClientToBank();
                     break;
                 case 7:
-                    BANK_SERVICE.showAllBankClients();
+                    BANK_FRONT.showAllBankClients();
                     break;
                 default:
                     logger.info("Нет такой операции, пожалуйста, попробуйте другую операцию!");

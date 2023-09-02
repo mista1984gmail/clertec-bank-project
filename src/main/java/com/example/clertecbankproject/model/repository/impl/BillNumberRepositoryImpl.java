@@ -35,6 +35,14 @@ public class BillNumberRepositoryImpl implements BillNumberRepository {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
         return countBills;
     }
 

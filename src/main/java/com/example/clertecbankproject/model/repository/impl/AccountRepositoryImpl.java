@@ -63,6 +63,14 @@ public class AccountRepositoryImpl implements AccountRepository {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
         return account;
     }
 
@@ -120,6 +128,14 @@ public class AccountRepositoryImpl implements AccountRepository {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
         return accounts;
     }
 
@@ -156,6 +172,14 @@ public class AccountRepositoryImpl implements AccountRepository {
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
+        }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
         }
         return accounts;
     }

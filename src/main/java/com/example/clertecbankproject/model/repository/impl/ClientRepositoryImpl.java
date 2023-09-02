@@ -46,6 +46,14 @@ public class ClientRepositoryImpl implements ClientRepository {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
         return clients;
     }
 
@@ -72,6 +80,14 @@ public class ClientRepositoryImpl implements ClientRepository {
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
+        }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
         }
         return client;
     }

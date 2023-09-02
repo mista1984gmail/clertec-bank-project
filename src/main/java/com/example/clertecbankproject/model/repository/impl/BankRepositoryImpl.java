@@ -41,6 +41,14 @@ public class BankRepositoryImpl implements BankRepository {
         } catch (SQLException e) {
             logger.error(e.getMessage());
         }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
         return banks;
     }
 
@@ -73,6 +81,14 @@ public class BankRepositoryImpl implements BankRepository {
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
+        }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
         }
         return bank;
     }
@@ -118,6 +134,14 @@ public class BankRepositoryImpl implements BankRepository {
             }
         } catch (SQLException e) {
             logger.error(e.getMessage());
+        }
+        finally {
+            try{
+                if(connection!=null)
+                    connection.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
         }
         return clients;
     }
